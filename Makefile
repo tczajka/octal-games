@@ -28,8 +28,6 @@ obj/%.o: src/%.cc
 bin/tests: $(TEST_OBJECTS) $(REGULAR_OBJECTS) obj-gtest/gtest_main.a | bin
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
--include $(DEPENDENCIES)
-
 # Googletest
 
 GTEST_HEADERS := $(GTEST_DIR)/include/gtest/*.h \
@@ -53,3 +51,7 @@ obj-gtest/gtest.a : obj-gtest/gtest-all.o
 
 obj-gtest/gtest_main.a : obj-gtest/gtest-all.o obj-gtest/gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
+
+# Dependencies
+
+-include $(DEPENDENCIES)

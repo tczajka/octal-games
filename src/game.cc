@@ -3,8 +3,7 @@
 
 Game::Game(const std::string &name) {
   if (name == "grundy") {
-    m_split_moves = 1;
-    m_equal_split_allowed = false;
+    *this = grundy();
   } else {
     if(name.size() > 33) throw std::domain_error("Game name too long " + name);
     for (unsigned i = 0; i < name.size(); ++i) {
@@ -34,9 +33,15 @@ Game::Game(const std::uint32_t _whole_moves,
   if (m_take_moves & 1u) throw std::domain_error("Infinite game");
 }
 
+Game Game::grundy() {
+  Game g(0, 0, 1);
+  g.m_equal_split_allowed = false;
+  return g;
+}
+
 std::string Game::name() const {
   if (!m_equal_split_allowed) {
-    if (m_whole_moves == 0 && m_take_moves == 0 && m_split_moves == 1) {
+    if (*this == grundy()) {
       return "grundy";
     } else {
       throw std::domain_error("Can't name this game");
@@ -54,4 +59,16 @@ std::string Game::name() const {
     if (res.size() > 1) res = res.substr(0, 1) + "." + res.substr(1);
     return res;
   }
+}
+
+bool Game::operator==(const Game &other) const {
+  return
+    m_whole_moves == other.m_whole_moves &&
+    m_take_moves == other.m_take_moves &&
+    m_split_moves == other.m_split_moves &&
+    m_equal_split_allowed == other.m_equal_split_allowed;
+}
+
+bool Game::operator!=(const Game &other) const {
+  return !(*this == other);
 }

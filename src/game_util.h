@@ -1,5 +1,5 @@
-#ifndef SIMPLE_SOLVER_H
-#define SIMPLE_SOLVER_H
+#ifndef GAME_UTIL_H
+#define GAME_UTIL_H
 
 #include <cstdint>
 #include <vector>

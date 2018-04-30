@@ -178,13 +178,10 @@ void try_to_solve(const Game &game, GameType &game_type) {
 }
 
 bool simpler_game(const Game &a, const Game &b) {
-  const int at = highest_bit(a.whole_moves() | a.take_moves() | a.split_moves());
-  const int bt = highest_bit(b.whole_moves() | b.take_moves() | b.split_moves());
-  if (at != bt) return at < bt;
-  if (a.split_moves() != b.split_moves()) return a.split_moves() < b.split_moves();
-  if (a.take_moves() != b.take_moves()) return a.take_moves() < b.take_moves();
-  if (a.whole_moves() != b.whole_moves()) return a.whole_moves() < b.whole_moves();
-  return false;
+  const string a_name = a.name();
+  const string b_name = b.name();
+  if (a_name.size() != b_name.size()) return a_name.size() < b_name.size();
+  return a_name < b_name;
 }
 
 vector<uint32_t> compute_reduced_nimbers(const Game &game) {
@@ -249,7 +246,8 @@ void print_equivalence_tables(const std::map<string, GameType> &game_types,
   cout << "game | 1    | 2    | 3    | 4    | 5    | 6    | 7\n";
   cout << ":--- | :--- | :--- | :--- | :--- | :--- | :--- | :---\n";
   for (char c0 : {'0', '4'}) {
-    cout << c0 << ".x";
+    if (c0 != '0') cout << c0; else cout << ' ';
+    cout << ".x";
     for (char c1 = '1'; c1 <= '7'; ++c1) {
       const Game game(string() + c0 + "." + c1);
       const Game repr = map_get(game_map, map_get(game_types, game.name())).representative;
@@ -268,7 +266,8 @@ void print_equivalence_tables(const std::map<string, GameType> &game_types,
   cout << ":---  | :--- | :--- | :--- | :--- | :--- | :--- | :---\n";
   for (char c0 : {'0', '4'}) {
     for (char c1 = '0'; c1 <= '7'; ++c1) {
-      cout << c0 << "." << c1 << "x ";
+      if (c0 != '0') cout << c0; else cout << ' ';
+      cout << "." << c1 << "x ";
       for (char c2 = '1'; c2 <= '7'; ++c2) {
         const Game game(string() + c0 + "." + c1 + c2);
         const Game repr = map_get(game_map, map_get(game_types, game.name())).representative;
@@ -289,7 +288,8 @@ void print_equivalence_tables(const std::map<string, GameType> &game_types,
   for (char c0 : {'0', '4'}) {
     for (char c1 = '0'; c1 <= '7'; ++c1) {
       for (char c2 = '0'; c2 <= '7'; ++c2) {
-        cout << c0 << "." << c1 << c2 << "x ";
+        if (c0 != '0') cout << c0; else cout << ' ';
+        cout << "." << c1 << c2 << "x ";
         for (char c3 = '1'; c3 <= '7'; ++c3) {
           const Game game(string() + c0 + "." + c1 + c2 + c3);
           const Game repr = map_get(game_map, map_get(game_types, game.name())).representative;
@@ -348,12 +348,12 @@ void print_games(const std::map<GameType, EquivalentGames> &game_map) {
   }
 
   // Print unsolved games.
-  cout << "\nNontrial games:\n";
-  unsigned count_unsolved = 0;
+  cout << "\nNontrival games:\n\n";
+  cout << "game  | notes\n";
+  cout << ":---  | -----\n";
   for (const auto &p : games_by_name) {
     if (!p.second->solved) {
-      cout << p.first.name() << "\n";
-      ++count_unsolved;
+      cout << std::setw(5) << std::left << p.first.name() << " |\n";
     }
   }
 }

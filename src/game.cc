@@ -8,18 +8,19 @@ Game::Game(const string &name) {
   if (name == "grundy") {
     *this = grundy();
   } else {
-    if(name.size() > 33) throw std::domain_error("Game name too long " + name);
-    for (unsigned i = 0; i < name.size(); ++i) {
-      if (i==1u) {
-        if (name[i] != '.') throw std::domain_error("Invalid game name " + name);
-      } else {
-        unsigned m = i==0 ? 0 : i-1u;
-        if (name[i] < '0' || name[i] > '7') throw std::domain_error("Invalid game name " + name);
-        unsigned c = name[i] - '0';
-        if (get_bit(c,0)) set_bit(m_whole_moves, m);
-        if (c & 2u) set_bit(m_take_moves, m);
-        if (c & 4u) set_bit(m_split_moves, m);
-      }
+    string name2 = name;
+    if(name2.size() >= 1u && name2[0]=='.') name2 = "0" + name2;
+    if(name2.size() >= 2u) {
+      if (name2[1] != '.') throw std::domain_error("Invalid name " + name);
+      name2.erase(1, 1);
+    }
+    if(name2.size() > 32) throw std::domain_error("Game name too long " + name);
+    for (unsigned i = 0; i < name2.size(); ++i) {
+      if (name2[i] < '0' || name2[i] > '7') throw std::domain_error("Invalid game name " + name);
+      unsigned c = name2[i] - '0';
+      if (get_bit(c,0)) set_bit(m_whole_moves, i);
+      if (c & 2u) set_bit(m_take_moves, i);
+      if (c & 4u) set_bit(m_split_moves, i);
     }
     if (m_whole_moves & 1u) throw std::domain_error("Infinite game");
     if (m_take_moves & 1u) throw std::domain_error("Infinite game");
@@ -59,7 +60,9 @@ string Game::name() const {
       res += static_cast<char>('0' + c);
     }
     while(res.size() > 1 && res.back() == '0') res.pop_back();
-    if (res.size() > 1) res = res.substr(0, 1) + "." + res.substr(1);
+    if (res.size() > 1) {
+      res = (res[0]=='0' ? string() : res.substr(0, 1)) + "." + res.substr(1);
+    }
     return res;
   }
 }

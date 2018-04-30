@@ -5,8 +5,9 @@ TEST(GameTest, test_names) {
   EXPECT_EQ(Game("0").name(), "0");
   EXPECT_EQ(Game("0.0").name(), "0");
   EXPECT_EQ(Game("4.0").name(), "4");
-  EXPECT_EQ(Game("0.77").name(), "0.77");
-  EXPECT_EQ(Game("0.1234567").name(), "0.1234567");
+  EXPECT_EQ(Game("0.77").name(), ".77");
+  EXPECT_EQ(Game("0.1234567").name(), ".1234567");
+  EXPECT_EQ(Game(".1234567").name(), ".1234567");
   EXPECT_EQ(Game("grundy").name(), "grundy");
 }
 

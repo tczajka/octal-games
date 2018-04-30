@@ -8,7 +8,7 @@ class Game {
 public:
   explicit Game() : Game(0, 0, 0) {}
   /*
-   * E.g. Game("0.123") or Game("grundy").
+   * E.g. Game(".123") or Game("grundy").
    */
   explicit Game(const std::string &name);
 

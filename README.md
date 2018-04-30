@@ -26,5 +26,8 @@ Many octal games are equivalent. Look up equivalent games in the [game lookup ta
 
 ## Mistakes found in other people's results
 
-Achim Flammenkamp's tables claim that games 0.161 and 0.36 are equivalent. They certainly seem
+In Winning Ways game locator: 
+* .27 should map to .26 (rather than .06).
+
+Achim Flammenkamp's tables claim that games .161 and .36 are equivalent. They certainly seem
 equivalent. However, they are different! The first difference is at heap size 519.

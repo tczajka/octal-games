@@ -328,13 +328,17 @@ void print_games(const std::map<GameType, EquivalentGames> &game_map) {
   cout << ":---- | -----: | -----: | :-----------\n";
   for (const auto &p : games_by_name) {
     if (p.second->solved) {
-      string s = nimbers_to_string(p.second->nimbers);
+      // Solve again so that we have correct heap sizes.
+      GameType gt;
+      try_to_solve(p.first, gt);
+      if (!gt.solved) throw std::runtime_error("it worked first time");
+      string s = nimbers_to_string(gt.nimbers);
 
       cout << std::setw(5) << std::left << p.first.name() << " | "
-           << std::setw(6) << std::right << p.second->period_start << " | "
-           << std::setw(6) << std::right << p.second->period << " | ";
+           << std::setw(6) << std::right << gt.period_start << " | "
+           << std::setw(6) << std::right << gt.period << " | ";
 
-      cout << s.substr(0, p.second->period_start) << "(" << s.substr(p.second->period_start) << ")\n";
+      cout << s.substr(0, gt.period_start) << "(" << s.substr(gt.period_start) << ")\n";
     }
   }
 

@@ -2,6 +2,9 @@
 
 These are games whose periods can be found by considering nimbers for heaps smaller than 1000.
 
+Each game is maximally normalized to an equivalent game with smallest heap sizes (i.e. the nimber sequence
+always starts with 01).
+
 game  | prefix | period | nimbers
 :---- | -----: | -----: | :-----------
 4     |      0 |      2 | (01)

@@ -131,40 +131,40 @@ bool operator<(const GameType &a, const GameType &b) {
   }
 }
 
-void try_to_solve(const Game &game, GameType &game_type) {
+void try_to_solve(const Game &game, GameType &game_type, unsigned n) {
   if (!game.equal_split_allowed()) {
     throw std::runtime_error("can't solve grundy's game");
   }
 
   const vector<uint32_t> nimbers =
-    brute_force_nimbers(game, num_nimbers);
+    brute_force_nimbers(game, n);
 
   unsigned t = highest_bit(game.whole_moves() | game.take_moves() | game.split_moves());
 
-  for (unsigned period = 1; period < num_nimbers; ++period) {
-    unsigned start = num_nimbers - period;
+  for (unsigned period = 1; period < n; ++period) {
+    unsigned start = n - period;
     while(start > 0u && nimbers[start-1u] == nimbers[start-1u + period]) {
       --start;
     }
 
     /*
      * To verify that the period persists, we need to check that:
-     * 1. limit-p no longer has whole moves:
-     *    limit >= p + t + 1
+     * 1. n-p no longer has whole moves:
+     *    n >= p + t + 1
      * 2. Take moves are same:
-     *    G[limit-p-t] = G[limit-t]
-     *    limit-p-t >= start
-     *    limit >= start + p + t
+     *    G[n-p-t] = G[n-t]
+     *    n-p-t >= start
+     *    n >= start + p + t
      * 3. Split moves are same:
-     *    limit-t = A+B, A>=B
+     *    n-t = A+B, A>=B
      *    then A >= ceil((limit-t)/2) must be >= st+p
-     *    (limit-t)/2 > st+p-1
-     *    limit-t >= 2*st+2*p-1
-     *    limit >= 2*start + 2*p + t - 1
+     *    (n-t)/2 > st+p-1
+     *    n-t >= 2*st+2*p-1
+     *    n >= 2*start + 2*p + t - 1
      * All together:
-     *    limit >= max(2*start + 2*p + t - 1, p + t + 1)
+     *    n >= max(2*start + 2*p + t - 1, p + t + 1)
      */
-    if (num_nimbers >= std::max(2*start + 2*period + t - 1, period + t + 1)) {
+    if (n >= std::max(2*start + 2*period + t - 1, period + t + 1)) {
       game_type.solved = true;
       game_type.period_start = start;
       game_type.period = period;
@@ -328,9 +328,9 @@ void print_games(const std::map<GameType, EquivalentGames> &game_map) {
   cout << ":---- | -----: | -----: | :-----------\n";
   for (const auto &p : games_by_name) {
     if (p.second->solved) {
-      // Solve again so that we have correct heap sizes.
+      // Solve again so that we have correct offset for heap sizes.
       GameType gt;
-      try_to_solve(p.first, gt);
+      try_to_solve(p.first, gt, num_nimbers + 10u);
       if (!gt.solved) throw std::runtime_error("it worked first time");
       string s = nimbers_to_string(gt.nimbers);
 
@@ -360,7 +360,7 @@ void process_all_games() {
   for (const Game &game : generate_octal_games()) {
     GameType game_type;
     const Game normalized_game = normalize_game(game);
-    try_to_solve(normalized_game, game_type);
+    try_to_solve(normalized_game, game_type, num_nimbers);
     game_types[game.name()] = game_type;
     game_map[game_type].games.push_back(game);
   }

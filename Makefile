@@ -6,10 +6,12 @@ SOURCES := $(shell find src -name '*.cc')
 OBJECTS := $(SOURCES:src/%.cc=obj/%.o)
 DEPENDENCIES := $(OBJECTS:%.o=%.d)
 TEST_OBJECTS := $(filter %_test.o, $(OBJECTS))
-REGULAR_OBJECTS := $(filter-out %_test.o, $(OBJECTS))
+EXEC_OBJECTS := $(filter %_exec.o, $(OBJECTS))
+REGULAR_OBJECTS := $(filter-out %_test.o %_exec.o, $(OBJECTS))
+BINARIES := $(EXEC_OBJECTS:obj/%_exec.o=bin/%)
 
 .PHONY: all
-all: bin/tests
+all: bin/tests $(BINARIES)
 
 .PHONY: clean
 clean:
@@ -26,6 +28,9 @@ obj/%.o: src/%.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ -Isrc
 
 bin/tests: $(TEST_OBJECTS) $(REGULAR_OBJECTS) obj-gtest/gtest_main.a | bin
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+
+bin/%: obj/%_exec.o $(REGULAR_OBJECTS) | bin
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 # Googletest

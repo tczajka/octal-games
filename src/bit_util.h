@@ -16,4 +16,19 @@ inline unsigned lowest_bit(std::uint64_t x) {
   return __builtin_ctzll(x);
 }
 
+template<typename T>
+inline bool get_bit(T x, unsigned bit) {
+  return x & (T(1) << bit);
+}
+
+template<typename T>
+inline void set_bit(T &x, unsigned bit) {
+  x |= T(1) << bit;
+}
+
+template<typename T>
+inline void reset_bit(T &x, unsigned bit) {
+  x &= ~(T(1) << bit);
+}
+
 #endif

@@ -1,3 +1,4 @@
+#include "bit_util.h"
 #include "game.h"
 #include <stdexcept>
 
@@ -13,9 +14,9 @@ Game::Game(const std::string &name) {
         unsigned m = i==0 ? 0 : i-1u;
         if (name[i] < '0' || name[i] > '7') throw std::domain_error("Invalid game name " + name);
         unsigned c = name[i] - '0';
-        if (c & 1u) m_whole_moves |= 1u << m;
-        if (c & 2u) m_take_moves |= 1u << m;
-        if (c & 4u) m_split_moves |= 1u << m;
+        if (get_bit(c,0)) set_bit(m_whole_moves, m);
+        if (c & 2u) set_bit(m_take_moves, m);
+        if (c & 4u) set_bit(m_split_moves, m);
       }
     }
     if (m_whole_moves & 1u) throw std::domain_error("Infinite game");
@@ -50,9 +51,9 @@ std::string Game::name() const {
     std::string res;
     for (unsigned t = 0; t < 32; ++t) {
       unsigned c = 0;
-      if (m_whole_moves & (1u << t)) c |= 1u;
-      if (m_take_moves & (1u << t)) c |= 2u;
-      if (m_split_moves & (1u << t)) c |= 4u;
+      if (get_bit(m_whole_moves, t)) set_bit(c, 0);
+      if (get_bit(m_take_moves, t)) set_bit(c, 1);
+      if (get_bit(m_split_moves, t)) set_bit(c, 2);
       res += static_cast<char>('0' + c);
     }
     while(res.size() > 1 && res.back() == '0') res.pop_back();

@@ -328,22 +328,13 @@ void print_games(const std::map<GameType, EquivalentGames> &game_map) {
   cout << ":---- | -----: | -----: | :-----------\n";
   for (const auto &p : games_by_name) {
     if (p.second->solved) {
-      // Find the number of extra initial zeroes for the representative game.
-      auto init = brute_force_nimbers(p.first, 10);
-      unsigned nonzero = 1;
-      while (nonzero<10u && init[nonzero]==0) ++nonzero;
-      if (nonzero==10u) throw std::runtime_error("can't find nonzero");
-      unsigned extra_zeroes = nonzero - 1u;
-
-      auto start = p.second->period_start + extra_zeroes;
+      string s = nimbers_to_string(p.second->nimbers);
 
       cout << std::setw(5) << std::left << p.first.name() << " | "
-           << std::setw(6) << std::right << start << " | "
+           << std::setw(6) << std::right << p.second->period_start << " | "
            << std::setw(6) << std::right << p.second->period << " | ";
 
-      const string s = string(extra_zeroes, '0') + nimbers_to_string(p.second->nimbers);
-
-      cout << s.substr(0, start) << "(" << s.substr(start) << ")\n";
+      cout << s.substr(0, p.second->period_start) << "(" << s.substr(p.second->period_start) << ")\n";
     }
   }
 

@@ -28,6 +28,7 @@ Many octal games are equivalent. Look up equivalent games in the [game lookup ta
 
 In Winning Ways game locator: 
 * .27 should map to .26 (rather than .06).
+* .314 should not map to .31
 
-Achim Flammenkamp's tables claim that games .161 and .36 are equivalent. They certainly seem
-equivalent. However, they are different! The first difference is at heap size 519.
+In Achim Flammenkamp's [tables](http://wwwhomes.uni-bielefeld.de/achim/comp_octal.txt):
+* .161 should not map to .36. The first difference between these two games is at heap size 519!

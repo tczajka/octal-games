@@ -15,3 +15,16 @@ More results were computed by [Achim Flammenkamp](http://wwwhomes.uni-bielefeld.
 There are however still a lot of unsolved games, including Grundy's Game.
 
 We are going to verify those results and solve some more games.
+
+## Results
+
+Many octal games are equivalent. Look up equivalent games in the [game lookup tables](GameLookup.md).
+
+[Trivial games](TrivialGames.md) are those that can be solved by looking at the first 1000 nim values.
+
+[Unsolved games](UnsolvedGames.md) are work in progress.
+
+## Mistakes found in other people's results
+
+Achim Flammenkamp's tables claim that games 0.161 and 0.36 are equivalent. They certainly seem
+equivalent. However, they are different! The first difference is at heap size 519.

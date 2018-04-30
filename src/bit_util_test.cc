@@ -18,6 +18,23 @@ TEST(BitUtilTest, test_lowest_bit_64) {
   EXPECT_EQ(lowest_bit(std::uint64_t(0x8000000000000000)), 63u);
 }
 
+TEST(BitUtilTest, test_highest_bit_32) {
+  EXPECT_EQ(highest_bit(std::uint32_t(1)), 0u);
+  EXPECT_EQ(highest_bit(std::uint32_t(0xff)), 7u);
+  EXPECT_EQ(highest_bit(std::uint32_t(0xf0)), 7u);
+  EXPECT_EQ(highest_bit(std::uint32_t(0x80000000)), 31u);
+}
+
+TEST(BitUtilTest, test_highest_bit_64) {
+  EXPECT_EQ(highest_bit(std::uint64_t(1)), 0u);
+  EXPECT_EQ(highest_bit(std::uint64_t(0xff)), 7u);
+  EXPECT_EQ(highest_bit(std::uint64_t(0xf0)), 7u);
+  EXPECT_EQ(highest_bit(std::uint64_t(0x80000000)), 31u);
+  EXPECT_EQ(highest_bit(std::uint64_t(0xf00000000)), 35u);
+  EXPECT_EQ(highest_bit(std::uint64_t(0x1000000000000000)), 60u);
+  EXPECT_EQ(highest_bit(std::uint64_t(0x9000000000000000)), 63u);
+}
+
 TEST(BitUtilTest, test_get_bit) {
   EXPECT_EQ(get_bit(11u, 0), true);
   EXPECT_EQ(get_bit(11u, 1), true);

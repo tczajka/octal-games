@@ -6,6 +6,7 @@
 
 class Game {
 public:
+  explicit Game() : Game(0, 0, 0) {}
   /*
    * E.g. Game("0.123") or Game("grundy").
    */

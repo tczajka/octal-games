@@ -25,7 +25,7 @@ inline unsigned highest_bit(std::uint64_t x) {
   static_assert(std::numeric_limits<unsigned long long>::digits == 64,
                 "unsigned long long != uint64_t");
 
-  return 63 - __builtin_ctzll(x);
+  return 63 - __builtin_clzll(x);
 }
 
 template<typename T>

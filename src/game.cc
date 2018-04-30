@@ -1,8 +1,10 @@
 #include "bit_util.h"
 #include "game.h"
 #include <stdexcept>
+using std::string;
+using std::uint32_t;
 
-Game::Game(const std::string &name) {
+Game::Game(const string &name) {
   if (name == "grundy") {
     *this = grundy();
   } else {
@@ -24,9 +26,9 @@ Game::Game(const std::string &name) {
   }
 }
 
-Game::Game(const std::uint32_t _whole_moves,
-           const std::uint32_t _take_moves,
-           const std::uint32_t _split_moves) :
+Game::Game(const uint32_t _whole_moves,
+           const uint32_t _take_moves,
+           const uint32_t _split_moves) :
     m_whole_moves{_whole_moves},
     m_take_moves{_take_moves},
     m_split_moves{_split_moves} {
@@ -40,7 +42,7 @@ Game Game::grundy() {
   return g;
 }
 
-std::string Game::name() const {
+string Game::name() const {
   if (!m_equal_split_allowed) {
     if (*this == grundy()) {
       return "grundy";
@@ -48,7 +50,7 @@ std::string Game::name() const {
       throw std::domain_error("Can't name this game");
     }
   } else {
-    std::string res;
+    string res;
     for (unsigned t = 0; t < 32; ++t) {
       unsigned c = 0;
       if (get_bit(m_whole_moves, t)) set_bit(c, 0);

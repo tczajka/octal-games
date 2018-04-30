@@ -1,4 +1,5 @@
 #include "bit_util.h"
+#include "container_util.h"
 #include "game.h"
 #include "game_util.h"
 #include <algorithm>
@@ -8,6 +9,11 @@
 #include <map>
 #include <string>
 #include <vector>
+using std::cout;
+using std::pair;
+using std::string;
+using std::uint32_t;
+using std::vector;
 
 unsigned num_nimbers;
 
@@ -15,7 +21,7 @@ void process_args(int argc, char **argv) {
   num_nimbers = 0;
   int i=1;
   while(i < argc) {
-    std::string a = argv[i++];
+    string a = argv[i++];
     if (a == "-n") {
       if (i >= argc) throw std::runtime_error("missing arg");
       unsigned long x = std::stoul(argv[i++]);
@@ -33,14 +39,14 @@ void process_args(int argc, char **argv) {
   }
 }
 
-std::vector<Game> generate_octal_games() {
-  std::vector<Game> octal_games;
+vector<Game> generate_octal_games() {
+  vector<Game> octal_games;
 
   for (char c0 : {'0', '4'}) {
     for (char c1 = '0'; c1 <= '7'; ++c1) {
       for (char c2 = '0'; c2 <= '7'; ++c2) {
         for (char c3 = '0'; c3 <= '7'; ++c3) {
-          Game game(std::string() + c0 + "." + c1 + c2 + c3);
+          Game game(string() + c0 + "." + c1 + c2 + c3);
           // Skip the zero game.
           if (game == Game()) continue;
           octal_games.push_back(game);
@@ -56,9 +62,9 @@ Game normalize_game(const Game &game) {
   if (!game.equal_split_allowed()) {
     throw std::runtime_error("can't normalize grundy");
   }
-  std::uint32_t whole_moves = game.whole_moves();
-  std::uint32_t take_moves = game.take_moves();
-  std::uint32_t split_moves = game.split_moves();
+  uint32_t whole_moves = game.whole_moves();
+  uint32_t take_moves = game.take_moves();
+  uint32_t split_moves = game.split_moves();
   // While can't take whole 1, reduce heap size.
   while (!get_bit(whole_moves, 1)) {
     if (get_bit(split_moves, 31)) {
@@ -100,13 +106,13 @@ struct GameType {
   // only if solved:
   unsigned period_start = 0;
   unsigned period = 0;
-  std::vector<std::uint32_t> nimbers;
+  vector<uint32_t> nimbers;
   // only if not solved:
   Game normalized_game;
 };
 
 struct EquivalentGames {
-  std::vector<Game> games;
+  vector<Game> games;
   Game representative;
 };
 
@@ -130,7 +136,7 @@ void try_to_solve(const Game &game, GameType &game_type) {
     throw std::runtime_error("can't solve grundy's game");
   }
 
-  const std::vector<std::uint32_t> nimbers =
+  const vector<uint32_t> nimbers =
     brute_force_nimbers(game, num_nimbers);
 
   unsigned t = highest_bit(game.whole_moves() | game.take_moves() | game.split_moves());
@@ -181,12 +187,12 @@ bool simpler_game(const Game &a, const Game &b) {
   return false;
 }
 
-std::vector<std::uint32_t> compute_reduced_nimbers(const Game &game) {
-  std::vector<std::uint32_t> nimbers = brute_force_nimbers(game, num_nimbers + 10u);
+vector<uint32_t> compute_reduced_nimbers(const Game &game) {
+  vector<uint32_t> nimbers = brute_force_nimbers(game, num_nimbers + 10u);
   unsigned st = 0;
   while(st<10u && nimbers[st]==0u) ++st;
   if (nimbers[st] == 0u) throw std::runtime_error("too many zeros");
-  return std::vector<std::uint32_t>(nimbers.begin() + st, nimbers.begin() + st + num_nimbers);
+  return vector<uint32_t>(nimbers.begin() + st, nimbers.begin() + st + num_nimbers);
 }
 
 void find_representatives(std::map<GameType, EquivalentGames> &game_map) {
@@ -195,14 +201,15 @@ void find_representatives(std::map<GameType, EquivalentGames> &game_map) {
     eq.representative = *std::min_element(eq.games.begin(), eq.games.end(), simpler_game);
   }
 }
+
 void verify_game_map(const std::map<GameType, EquivalentGames> &game_map) {
-  std::map<std::vector<std::uint32_t>, Game> reverse_map;
+  std::map<vector<uint32_t>, Game> reverse_map;
 
   // Check all games within group seem same, all games in different groups seem different.
   for (const auto &game_map_entry : game_map) {
     const EquivalentGames &eq = game_map_entry.second;
 
-    const std::vector<std::uint32_t> reduced_nimbers =
+    const vector<uint32_t> reduced_nimbers =
       compute_reduced_nimbers(eq.games[0]);
 
     for (size_t i = 1; i < eq.games.size(); ++i) {
@@ -223,7 +230,7 @@ void verify_game_map(const std::map<GameType, EquivalentGames> &game_map) {
 
   // Check that the Grundy's game seems different that regular games.
   {
-    const std::vector<std::uint32_t> reduced_nimbers =
+    const vector<uint32_t> reduced_nimbers =
       compute_reduced_nimbers(Game::grundy());
 
     auto it = reverse_map.find(reduced_nimbers);
@@ -234,74 +241,66 @@ void verify_game_map(const std::map<GameType, EquivalentGames> &game_map) {
   }
 }
 
-
-template<typename K, typename V>
-const V &map_find(const std::map<K, V> &m, const K &key) {
-  auto it = m.find(key);
-  if (it == m.end()) throw std::runtime_error("key not found in map");
-  return it->second;
-}
-
-void print_equivalence_tables(const std::map<std::string, GameType> &game_types,
+void print_equivalence_tables(const std::map<string, GameType> &game_types,
                               const std::map<GameType, EquivalentGames> &game_map) {
-  std::cout << "Equivalence tables.\n";
+  cout << "Equivalence tables.\n";
 
-  std::cout << "\n";
-  std::cout << "game | 1    | 2    | 3    | 4    | 5    | 6    | 7\n";
-  std::cout << ":--- | :--- | :--- | :--- | :--- | :--- | :--- | :---\n";
+  cout << "\n";
+  cout << "game | 1    | 2    | 3    | 4    | 5    | 6    | 7\n";
+  cout << ":--- | :--- | :--- | :--- | :--- | :--- | :--- | :---\n";
   for (char c0 : {'0', '4'}) {
-    std::cout << c0 << ".x";
+    cout << c0 << ".x";
     for (char c1 = '1'; c1 <= '7'; ++c1) {
-      const Game game(std::string() + c0 + "." + c1);
-      const Game repr = map_find(game_map, map_find(game_types, game.name())).representative;
-      std::cout << "  | " << std::left << std::setw(3);
+      const Game game(string() + c0 + "." + c1);
+      const Game repr = map_get(game_map, map_get(game_types, game.name())).representative;
+      cout << "  | " << std::left << std::setw(3);
       if (repr == game) {
-        std::cout << "-";
+        cout << "-";
       } else {
-        std::cout << repr.name();
+        cout << repr.name();
       }
     }
-    std::cout << "\n";
+    cout << "\n";
   }
 
-  std::cout << "\n";
-  std::cout << "game  | 1    | 2    | 3    | 4    | 5    | 6    | 7\n";
-  std::cout << ":---  | :--- | :--- | :--- | :--- | :--- | :--- | :---\n";
+  cout << "\n";
+  cout << "game  | 1    | 2    | 3    | 4    | 5    | 6    | 7\n";
+  cout << ":---  | :--- | :--- | :--- | :--- | :--- | :--- | :---\n";
   for (char c0 : {'0', '4'}) {
     for (char c1 = '0'; c1 <= '7'; ++c1) {
-      std::cout << c0 << "." << c1 << "x ";
+      cout << c0 << "." << c1 << "x ";
       for (char c2 = '1'; c2 <= '7'; ++c2) {
-        const Game game(std::string() + c0 + "." + c1 + c2);
-        const Game repr = map_find(game_map, map_find(game_types, game.name())).representative;
-        std::cout << " | " << std::left << std::setw(4);
+        const Game game(string() + c0 + "." + c1 + c2);
+        const Game repr = map_get(game_map, map_get(game_types, game.name())).representative;
+        cout << " | " << std::left << std::setw(4);
         if (repr == game) {
-          std::cout << "-";
+          cout << "-";
         } else {
-          std::cout << repr.name();
+          cout << repr.name();
         }
       }
-      std::cout << "\n";
+      cout << "\n";
     }
   }
 
-  std::cout << "\n";
-  std::cout << "game   | 1     | 2     | 3     | 4     | 5     | 6     | 7\n";
-  std::cout << ":----  | :---- | :---- | :---- | :---- | :---- | :---- | :----\n";
+  cout << "\n";
+  cout << "game   | 1     | 2     | 3     | 4     | 5     | 6     | 7\n";
+  cout << ":----  | :---- | :---- | :---- | :---- | :---- | :---- | :----\n";
   for (char c0 : {'0', '4'}) {
     for (char c1 = '0'; c1 <= '7'; ++c1) {
       for (char c2 = '0'; c2 <= '7'; ++c2) {
-        std::cout << c0 << "." << c1 << c2 << "x ";
+        cout << c0 << "." << c1 << c2 << "x ";
         for (char c3 = '1'; c3 <= '7'; ++c3) {
-          const Game game(std::string() + c0 + "." + c1 + c2 + c3);
-          const Game repr = map_find(game_map, map_find(game_types, game.name())).representative;
-          std::cout << " | " << std::left << std::setw(5);
+          const Game game(string() + c0 + "." + c1 + c2 + c3);
+          const Game repr = map_get(game_map, map_get(game_types, game.name())).representative;
+          cout << " | " << std::left << std::setw(5);
           if (repr == game) {
-            std::cout << "-";
+            cout << "-";
           } else {
-            std::cout << repr.name();
+            cout << repr.name();
           }
         }
-        std::cout << "\n";
+        cout << "\n";
       }
     }
   }
@@ -309,45 +308,58 @@ void print_equivalence_tables(const std::map<std::string, GameType> &game_types,
 
 void print_games(const std::map<GameType, EquivalentGames> &game_map) {
   // Sort game map, shorter names first.
-  std::vector<std::pair<Game, const GameType*>> games_by_name;
+  vector<pair<Game, const GameType*>> games_by_name;
   for (const auto &p : game_map) {
     games_by_name.push_back({p.second.representative, &p.first});
   }
   std::sort(games_by_name.begin(),
             games_by_name.end(),
-            [](const std::pair<Game, const GameType*> &a,
-               const std::pair<Game, const GameType*> &b) {
-              const std::string a_name = a.first.name();
-              const std::string b_name = b.first.name();
+            [](const pair<Game, const GameType*> &a,
+               const pair<Game, const GameType*> &b) {
+              const string a_name = a.first.name();
+              const string b_name = b.first.name();
               if (a_name.size() != b_name.size()) return a_name.size() < b_name.size();
               return a_name < b_name;
             });
 
   // Print solved games.
-  std::cout << "\nTrivial games:\n\n";
-  std::cout << "game  | prefix | period\n";
-  std::cout << ":---- | -----: | -----:\n";
+  cout << "\nTrivial games:\n\n";
+  cout << "game  | prefix | period | nimbers\n";
+  cout << ":---- | -----: | -----: | :-----------\n";
   for (const auto &p : games_by_name) {
     if (p.second->solved) {
-      std::cout << std::setw(5) << std::left << p.first.name() << " | "
-                << std::setw(6) << std::right << p.second->period_start << " | "
-                << std::setw(6) << std::right << p.second->period << "\n";
+      // Find the number of extra initial zeroes for the representative game.
+      auto init = brute_force_nimbers(p.first, 10);
+      unsigned nonzero = 1;
+      while (nonzero<10u && init[nonzero]==0) ++nonzero;
+      if (nonzero==10u) throw std::runtime_error("can't find nonzero");
+      unsigned extra_zeroes = nonzero - 1u;
+
+      auto start = p.second->period_start + extra_zeroes;
+
+      cout << std::setw(5) << std::left << p.first.name() << " | "
+           << std::setw(6) << std::right << start << " | "
+           << std::setw(6) << std::right << p.second->period << " | ";
+
+      const string s = string(extra_zeroes, '0') + nimbers_to_string(p.second->nimbers);
+
+      cout << s.substr(0, start) << "(" << s.substr(start) << ")\n";
     }
   }
 
   // Print unsolved games.
-  std::cout << "\nNontrial games:\n";
+  cout << "\nNontrial games:\n";
   unsigned count_unsolved = 0;
   for (const auto &p : games_by_name) {
     if (!p.second->solved) {
-      std::cout << p.first.name() << "\n";
+      cout << p.first.name() << "\n";
       ++count_unsolved;
     }
   }
 }
 
 void process_all_games() {
-  std::map<std::string, GameType> game_types;
+  std::map<string, GameType> game_types;
   std::map<GameType, EquivalentGames> game_map;
 
   for (const Game &game : generate_octal_games()) {

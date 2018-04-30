@@ -20,7 +20,7 @@ We are going to verify those results and solve some more games.
 
 Many octal games are equivalent. Look up equivalent games in the [game lookup tables](GameLookup.md).
 
-[Trivial games](TrivialGames.md) are those that can be solved by looking at the first 1000 nim values.
+[Trivial games](TrivialGames.md) are those that can be solved by looking at the first 1000 nimbers.
 
 [Unsolved games](UnsolvedGames.md) are work in progress.
 

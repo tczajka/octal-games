@@ -4,11 +4,15 @@
 #include <limits>
 #include <stdexcept>
 
-std::uint32_t mex(const std::vector<std::uint32_t> &v) {
-  if (v.size() >= std::numeric_limits<std::uint32_t>::max()) {
+using std::string;
+using std::vector;
+using std::uint32_t;
+
+uint32_t mex(const vector<uint32_t> &v) {
+  if (v.size() >= std::numeric_limits<uint32_t>::max()) {
     throw std::domain_error("too many mex params");
   }
-  std::vector<bool> seen(v.size() + 1u, false);
+  vector<bool> seen(v.size() + 1u, false);
   for (auto x : v) {
     if (x < seen.size()) seen[x] = true;
   }
@@ -17,15 +21,15 @@ std::uint32_t mex(const std::vector<std::uint32_t> &v) {
   return res;
 }
 
-std::vector<std::uint32_t> brute_force_nimbers(const Game &game, const size_t size) {
+vector<uint32_t> brute_force_nimbers(const Game &game, const size_t size) {
   if (size > std::numeric_limits<size_t>::max() / 4) {
     throw std::domain_error("size too large");
   }
 
-  std::vector<std::uint32_t> nimbers(size, 0);
+  vector<uint32_t> nimbers(size, 0);
 
   for (size_t n = 0; n < size; ++n) {
-    std::vector<std::uint32_t> excluded;
+    vector<uint32_t> excluded;
 
     if (n < 32u && get_bit(game.whole_moves(), n)) {
       excluded.push_back(0);
@@ -55,4 +59,14 @@ std::vector<std::uint32_t> brute_force_nimbers(const Game &game, const size_t si
   }
 
   return nimbers;
+}
+
+string nimbers_to_string(const vector<uint32_t> &nimbers) {
+  string res(nimbers.size(), '?');
+  for (size_t i = 0u; i < nimbers.size(); ++i) {
+    const auto n = nimbers[i];
+    if (n < 10u) res[i] = static_cast<char>('0' + n);
+    else if (n < 36u) res[i] = static_cast<char>('A' + (n - 10));
+  }
+  return res;
 }

@@ -4,6 +4,7 @@ These games have not been solved yet.
 
 game  | notes
 :---  | -----
+Grundy's |
 .6    |
 .04   |
 .06   |
@@ -96,4 +97,3 @@ game  | notes
 4.367 |
 4.404 |
 4.406 |
-

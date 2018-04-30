@@ -3,9 +3,9 @@
 The goal here is to solve [octal games](https://en.wikipedia.org/wiki/Octal_game)
 and [Grundy's game](https://en.wikipedia.org/wiki/Grundy%27s_game).
 
-To solve these games is to find the period, if any, of the sequence of nim values
+To solve these games is to find the period, if any, of the sequence of nimbers
 (as defined by [Sprague-Grundy theorem](https://en.wikipedia.org/wiki/Sprague%E2%80%93Grundy_theorem))
-for all heap sizes.
+for consecutive heap sizes.
 
 Some results were published in the book
 ["Winning Ways for Your Mathematical Plays"](https://en.wikipedia.org/wiki/Winning_Ways_for_your_Mathematical_Plays).

@@ -11,3 +11,4 @@ game  |    prefix | period | largest idx | largest | rare mask | num rare | last
 .56   |    326640 |    144 |       22778 |      64 |        5b |       46 |      1795 | Anil Gangolli, Thane Plambeck, 1989
 .127  |     46578 |      4 |       24734 |      56 |     1+pos |      693 |     27106 | Anil Gangolli, Thane Plambeck, 1989
 .376  |   2268248 |      4 |      341612 |     176 |        fe |      510 |   1140540 | Anil Gangolli, Thane Plambeck, 1989
+.354  |  10061916 |   1180 |        1152 |     113 |        3f |      132 |      3227 | Achim Flammenkamp, 2002

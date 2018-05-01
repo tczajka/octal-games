@@ -157,14 +157,14 @@ void try_to_solve(const Game &game, GameType &game_type, unsigned n) {
      *    n >= start + p + t
      * 3. Split moves are same:
      *    n-t = A+B, A>=B
-     *    then A >= ceil((limit-t)/2) must be >= st+p
+     *    then A >= ceil((n-t)/2) must be >= st+p
      *    (n-t)/2 > st+p-1
      *    n-t >= 2*st+2*p-1
      *    n >= 2*start + 2*p + t - 1
      * All together:
      *    n >= max(2*start + 2*p + t - 1, p + t + 1)
      */
-    if (n >= std::max(2*start + 2*period + t - 1, period + t + 1)) {
+    if (game.equal_split_allowed() && n >= std::max(2*start + 2*period + t - 1, period + t + 1)) {
       game_type.solved = true;
       game_type.period_start = start;
       game_type.period = period;

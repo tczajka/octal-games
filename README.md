@@ -22,6 +22,8 @@ Many octal games are equivalent. Look up equivalent games in the [game lookup ta
 
 [Trivial games](TrivialGames.md) are those that can be solved by looking at the first 1000 nimbers.
 
+[Solved games](SolvedGames.md) contain confirmed nontrivial results.
+
 [Unsolved games](UnsolvedGames.md) are work in progress.
 
 ## Mistakes found in other people's results

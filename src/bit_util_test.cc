@@ -35,6 +35,17 @@ TEST(BitUtilTest, test_highest_bit_64) {
   EXPECT_EQ(highest_bit(std::uint64_t(0x9000000000000000)), 63u);
 }
 
+TEST(BitUtilTest, test_parity_32) {
+  EXPECT_EQ(parity(uint32_t(0)), false);
+  EXPECT_EQ(parity(uint32_t(3)), false);
+  EXPECT_EQ(parity(uint32_t(7)), true);
+}
+
+TEST(BitUtilTest, test_parity_64) {
+  EXPECT_EQ(parity(uint64_t(0x1111111111111111u)), false);
+  EXPECT_EQ(parity(uint64_t(0x3111111111111111u)), true);
+}
+
 TEST(BitUtilTest, test_get_bit) {
   EXPECT_EQ(get_bit(11u, 0), true);
   EXPECT_EQ(get_bit(11u, 1), true);
@@ -64,4 +75,15 @@ TEST(BitUtilTest, test_reset_bit) {
   std::uint64_t b = 0xffffffffffffffffu;
   reset_bit(b, 63);
   EXPECT_EQ(b, 0x7fffffffffffffffu);
+}
+
+TEST(BitUtilTest, test_is_power_of_2) {
+  EXPECT_TRUE(is_power_of_2(1));
+  EXPECT_TRUE(is_power_of_2(1<<10));
+  EXPECT_TRUE(is_power_of_2(1u<<10));
+  EXPECT_TRUE(is_power_of_2(1ull<<63));
+  EXPECT_FALSE(is_power_of_2(0));
+  EXPECT_FALSE(is_power_of_2(0u));
+  EXPECT_FALSE(is_power_of_2(-1));
+  EXPECT_FALSE(is_power_of_2(5));
 }

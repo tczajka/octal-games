@@ -1,4 +1,5 @@
 /old/bin/
 /old/obj/
 /old/obj-gtest/
+/target
 *.swp

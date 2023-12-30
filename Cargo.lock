@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "octal-games-2"
+name = "octal-games"
 version = "0.1.0"

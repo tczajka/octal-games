@@ -1,4 +1,6 @@
 mod small_set;
 
 #[cfg(test)]
-mod tests;
+mod tests {
+    mod small_set;
+}

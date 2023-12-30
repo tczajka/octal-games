@@ -30,3 +30,37 @@ fn bitops() {
 
     assert_eq!(a.and_not(b), a_and_not_b);
 }
+
+#[test]
+fn shifts() {
+    let a: SmallSet = [1, 2, 5].into_iter().collect();
+    let a_shl_2: SmallSet = [3, 4, 7].into_iter().collect();
+    let a_shr_1: SmallSet = [0, 1, 4].into_iter().collect();
+
+    assert_eq!(a << 2, a_shl_2);
+    let mut x = a;
+    x <<= 2;
+    assert_eq!(x, a_shl_2);
+
+    assert_eq!(a >> 1, a_shr_1);
+    let mut x = a;
+    x >>= 1;
+    assert_eq!(x, a_shr_1);
+
+    assert_eq!(SmallSet::EMPTY << 1000, SmallSet::EMPTY);
+    assert_eq!(SmallSet::EMPTY >> 1000, SmallSet::EMPTY);
+}
+
+#[test]
+#[should_panic]
+fn shl_overflow() {
+    let a: SmallSet = [1, 2, 5].into_iter().collect();
+    let _ = a << 59;
+}
+
+#[test]
+#[should_panic]
+fn shr_overflow() {
+    let a: SmallSet = [1, 2, 5].into_iter().collect();
+    let _ = a >> 2;
+}

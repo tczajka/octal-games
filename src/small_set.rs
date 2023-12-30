@@ -1,18 +1,34 @@
-use std::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign};
+use std::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, Shl, ShlAssign, Shr, ShrAssign};
+
+const BITS: u64 = 64;
+type Repr = u64;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct SmallSet(u64);
+pub struct SmallSet(Repr);
 
 impl SmallSet {
-    const EMPTY: Self = SmallSet(0);
+    pub const EMPTY: Self = SmallSet(0);
+
+    pub fn is_empty(self) -> bool {
+        self == Self::EMPTY
+    }
 
     pub fn single(x: u64) -> Self {
-        assert!(x < 64);
+        assert!(x < BITS);
         SmallSet(1 << x)
     }
 
+    pub fn all_below(x: u64) -> Self {
+        assert!(x <= BITS);
+        if x == BITS {
+            Self(Repr::MAX)
+        } else {
+            Self((1 << x) - 1)
+        }
+    }
+
     pub fn contains(self, x: u64) -> bool {
-        self & Self::single(x) != Self::EMPTY
+        !(self & Self::single(x)).is_empty()
     }
 
     pub fn insert(&mut self, x: u64) {
@@ -28,7 +44,7 @@ impl SmallSet {
     }
 
     pub fn smallest(self) -> Option<u64> {
-        if self.0 == 0 {
+        if self.is_empty() {
             None
         } else {
             Some(self.0.trailing_zeros().into())
@@ -61,6 +77,44 @@ impl BitOr for SmallSet {
 impl BitOrAssign for SmallSet {
     fn bitor_assign(&mut self, rhs: Self) {
         *self = *self | rhs;
+    }
+}
+
+impl Shl<u64> for SmallSet {
+    type Output = Self;
+
+    fn shl(self, x: u64) -> Self {
+        if self.is_empty() {
+            return Self::EMPTY;
+        }
+        assert!(x < BITS);
+        assert!(self.and_not(Self::all_below(BITS - x)).is_empty());
+        Self(self.0 << x)
+    }
+}
+
+impl ShlAssign<u64> for SmallSet {
+    fn shl_assign(&mut self, x: u64) {
+        *self = *self << x;
+    }
+}
+
+impl ShrAssign<u64> for SmallSet {
+    fn shr_assign(&mut self, x: u64) {
+        *self = *self >> x;
+    }
+}
+
+impl Shr<u64> for SmallSet {
+    type Output = Self;
+
+    fn shr(self, x: u64) -> Self {
+        if self.is_empty() {
+            return Self::EMPTY;
+        }
+        assert!(x < BITS);
+        assert!((self & Self::all_below(x)).is_empty());
+        Self(self.0 >> x)
     }
 }
 

@@ -1,7 +1,7 @@
 use std::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, Shl, ShlAssign, Shr, ShrAssign};
 
-const BITS: u64 = 64;
 type Repr = u64;
+const BITS: u64 = Repr::BITS as u64;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct SmallSet(Repr);

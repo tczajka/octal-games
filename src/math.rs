@@ -25,3 +25,8 @@ pub fn gcd(mut a: u64, mut b: u64) -> u64 {
     }
     a << shift
 }
+
+pub fn lcm(a: u64, b: u64) -> u64 {
+    assert!(a != 0 && b != 0);
+    (a / gcd(a, b)).checked_mul(b).unwrap()
+}

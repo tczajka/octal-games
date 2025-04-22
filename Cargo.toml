@@ -2,7 +2,11 @@
 name = "octal-games"
 version = "0.1.0"
 edition = "2021"
+description = "Octal games solver."
+authors = ["Tomek Czajka"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
+[dependencies.clap]
+version = "4.5.36"
+features = ["derive"]
